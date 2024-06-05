@@ -49,7 +49,7 @@ const TeamStats = ({ teamId, season }) => {
         case 'Shot Chart':
           // Shot Chart implementation here
           svg.append('image')
-            .attr('xlink:href', '/path/to/basketball-court.svg')
+            .attr('xlink:href', '/Users/osheikh/Documents/GitHub/team-performance-analyzer/frontend/src/basketball-court.png') // Update path to your image
             .attr('width', width)
             .attr('height', height);
 
@@ -77,7 +77,7 @@ const TeamStats = ({ teamId, season }) => {
             .domain([0, d3.max(heatMapData, d => d.length)]);
 
           svg.append('image')
-            .attr('xlink:href', '/path/to/basketball-court.svg')
+            .attr('xlink:href', '/Users/osheikh/Documents/GitHub/team-performance-analyzer/frontend/src/basketball-court.png') // Update path to your image
             .attr('width', width)
             .attr('height', height);
 
@@ -123,7 +123,7 @@ const TeamStats = ({ teamId, season }) => {
         case 'Shot Trajectories':
           // Shot Trajectories implementation here
           svg.append('image')
-            .attr('xlink:href', '/path/to/basketball-court.svg')
+            .attr('xlink:href', '/Users/osheikh/Documents/GitHub/team-performance-analyzer/frontend/src/basketball-court.png') // Update path to your image
             .attr('width', width)
             .attr('height', height);
 
