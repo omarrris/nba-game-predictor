@@ -30,4 +30,14 @@ const getPlayerStats = async (req, res) => {
   }
 };
 
-module.exports = { getTeams, getTeamStats, getPlayerStats };
+const getPlayers = async (req, res) => {
+  const { team_id } = req.query;
+  try {
+    const response = await axios.get(`https://www.balldontlie.io/api/v1/players?team_ids[]=${team_id}`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch players' });
+  }
+};
+
+module.exports = { getTeams, getTeamStats, getPlayerStats, getPlayers };

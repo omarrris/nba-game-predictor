@@ -20,3 +20,10 @@ export const getPlayerStats = async (playerId) => {
   const response = await api.get(`/player/${playerId}/stats`);
   return response.data;
 };
+
+export const getPlayers = async (teamId) => {
+  const response = await api.get(`/players`, {
+    params: { team_id: teamId },
+  });
+  return response.data;
+};
