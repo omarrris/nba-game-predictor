@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { getTeamStats, getPlayers, getPlayerStats } from '../services/api';
+import { getTeams, getTeamStats, getPlayers, getPlayerStats } from '../services/api';
 import VisualizationToggle from './VisualizationToggle';
 import * as d3 from 'd3';
 import * as THREE from 'three';
 import './TeamStats.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const TeamStats = ({ teamId, season }) => {
+const TeamStats = () => {
+  const [teams, setTeams] = useState([]);
+  const [seasons, setSeasons] = useState(['2023', '2022', '2021', '2020']); // Add more seasons as needed
+  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedSeason, setSelectedSeason] = useState('2023');
   const [stats, setStats] = useState([]);
   const [players, setPlayers] = useState([]);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -13,19 +18,30 @@ const TeamStats = ({ teamId, season }) => {
   const visualizations = ['Shot Chart', 'Heat Map', 'Radial Chart', 'Shot Trajectories', '3D Court'];
 
   useEffect(() => {
-    const fetchStats = async () => {
-      const data = await getTeamStats(teamId, season);
-      setStats(data.data);
+    const fetchTeams = async () => {
+      const data = await getTeams();
+      setTeams(data.data);
     };
 
-    const fetchPlayers = async () => {
-      const data = await getPlayers(teamId);
-      setPlayers(data.data);
-    };
+    fetchTeams();
+  }, []);
 
-    fetchStats();
-    fetchPlayers();
-  }, [teamId, season]);
+  useEffect(() => {
+    if (selectedTeam && selectedSeason) {
+      const fetchStats = async () => {
+        const data = await getTeamStats(selectedTeam.id, selectedSeason);
+        setStats(data.data);
+      };
+
+      const fetchPlayers = async () => {
+        const data = await getPlayers(selectedTeam.id);
+        setPlayers(data.data);
+      };
+
+      fetchStats();
+      fetchPlayers();
+    }
+  }, [selectedTeam, selectedSeason]);
 
   useEffect(() => {
     if (selectedPlayer) {
@@ -49,7 +65,7 @@ const TeamStats = ({ teamId, season }) => {
         case 'Shot Chart':
           // Shot Chart implementation here
           svg.append('image')
-            .attr('xlink:href', '/Users/osheikh/Documents/GitHub/team-performance-analyzer/frontend/src/basketball-court.png') // Update path to your image
+            .attr('xlink:href', '/basketball-court.png') // Update path to your image
             .attr('width', width)
             .attr('height', height);
 
@@ -77,7 +93,7 @@ const TeamStats = ({ teamId, season }) => {
             .domain([0, d3.max(heatMapData, d => d.length)]);
 
           svg.append('image')
-            .attr('xlink:href', '/Users/osheikh/Documents/GitHub/team-performance-analyzer/frontend/src/basketball-court.png') // Update path to your image
+            .attr('xlink:href', '/basketball-court.png') // Update path to your image
             .attr('width', width)
             .attr('height', height);
 
@@ -123,7 +139,7 @@ const TeamStats = ({ teamId, season }) => {
         case 'Shot Trajectories':
           // Shot Trajectories implementation here
           svg.append('image')
-            .attr('xlink:href', '/Users/osheikh/Documents/GitHub/team-performance-analyzer/frontend/src/basketball-court.png') // Update path to your image
+            .attr('xlink:href', '/basketball-court.png') // Update path to your image
             .attr('width', width)
             .attr('height', height);
 
@@ -179,12 +195,39 @@ const TeamStats = ({ teamId, season }) => {
   }, [stats, currentVisualization]);
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Team Stats</h2>
-      <div>
-        <label htmlFor="player-select">Select Player: </label>
+      <div className="mb-3">
+        <label htmlFor="team-select" className="form-label">Select Team: </label>
+        <select
+          id="team-select"
+          className="form-select"
+          onChange={e => setSelectedTeam(teams.find(team => team.id === parseInt(e.target.value)))}
+        >
+          <option value="">Select a team</option>
+          {teams.map(team => (
+            <option key={team.id} value={team.id}>{team.full_name}</option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-3">
+        <label htmlFor="season-select" className="form-label">Select Season: </label>
+        <select
+          id="season-select"
+          className="form-select"
+          value={selectedSeason}
+          onChange={e => setSelectedSeason(e.target.value)}
+        >
+          {seasons.map(season => (
+            <option key={season} value={season}>{season}</option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-3">
+        <label htmlFor="player-select" className="form-label">Select Player: </label>
         <select
           id="player-select"
+          className="form-select"
           onChange={e => setSelectedPlayer(players.find(player => player.id === parseInt(e.target.value)))}
         >
           <option value="">All Players</option>
